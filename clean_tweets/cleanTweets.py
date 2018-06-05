@@ -5,11 +5,26 @@ Author - Manan Soni (BITS ACM) (github: MananSoni42)
 
 from nltk.tokenize import sent_tokenize,word_tokenize,TweetTokenizer
 from pattern3.en import suggest
+#to disable timing: remove @timer
+#also remove the below line
+from timer import timer
 import hunspell
 import re
 import copy
 
 class Tweet:
+
+    #set of emoticons to compare with.
+    em = {':-)',':)',':-]',':]',':-3',':3',':->',':>','8-)','8)',':-}',':}',':o)',':c)',':^)','=]','=)',':-D',':D','8-D','8D','x-D','xD','X-D','XD','=D','=3','B^D',':-))',':\'-)',':\')'\
+    ':-(',':(',':-c',':c',':-<',':<',':-[',':[',':-||','>:[','>:{',':@','>:(',':\'-(',':\'(','D-\':','D:<','D:','D8','D;','D=','DX',':-o',':o',':-O',':O',':-0','8-0','>:O',':-*',':*',\
+    ':x',':x',';-)',';)','*-)','*)',';-]',';]',';^}',':-,',';D',':-P',':P','X-P','XP','xp','x-p','xp',':-p',':p',':-b',':b','d:','=p','>:P',':-/',':/',':-.','>:\\','>:/',':\\','=/',\
+    '=\\',':L','=L',':S',':-|',':|',':$',':-X',':X',':-#',':#',':-&',':&',';\'(','O:-)','O:)','O:-3','O:3','0:-3','0:3','0:-)','0:)','0;^)','>:-)','>:)','}:-)','}:)','3:-)','3:)',\
+    '>;)','|;-)','|-O',':-J','<:-|','\',:-|','%-)','%)'}
+
+    #set of punctuation symbols
+    punc = {',','.','!','\'','"',';',':','?','&','/','\\','*','~','(',')','[',']','{','}','$','%','^','-','_','+','=','|','<','>'}
+
+    @timer
     def __init__(self,sen):
         if not isinstance(sen,str):
             raise TypeError('Expected: ' + str(type('a')) + ' received: ' + str(type(sen)))
@@ -22,6 +37,7 @@ class Tweet:
     def __repr__(self):
         return self.original
 
+    @timer
     def defaultClean(self):
         '''
         Parameters: None
@@ -35,8 +51,9 @@ class Tweet:
         self.replName(origTweet=False)
         self.sepChar(origTweet=False)
         self.spellCorrect(origTweet=False)
-
         return self.sen
+
+    @timer
     def remNewLine(self,origTweet=True):
         '''
         Parameters: None
@@ -55,6 +72,7 @@ class Tweet:
         self.sen = line
         return line
 
+    @timer
     def remEmojis(self,origTweet=True):
         '''
         Parameters: None
@@ -72,6 +90,7 @@ class Tweet:
         self.sen = line
         return line
 
+    @timer
     def getTweet(self,orig = False,origTweet=True):
         '''
         Parameters: orig = True/False
@@ -83,6 +102,7 @@ class Tweet:
         else:
             return self.sen
 
+    @timer
     def remEmoticons(self,origTweet=True):
         '''
         Parameters: None
@@ -95,21 +115,14 @@ class Tweet:
         else:
             line = self.sen
 
-        #define relevant emoticons
-        emh = [':-)',':)',':-]',':]',':-3',':3',':->',':>','8-)','8)',':-}',':}',':o)',':c)',':^)','=]','=)',':-D',':D','8-D','8D','x-D','xD','X-D','XD','=D','=3','B^D',':-))',':\'-)',':\')']
-        ems = [':-(',':(',':-c',':c',':-<',':<',':-[',':[',':-||','>:[','>:{',':@','>:(',':\'-(',':\'(']
-        emr1 = ['D-\':','D:<','D:','D8','D;','D=','DX',':-o',':o',':-O',':O',':-0','8-0','>:O',':-*',':*',':x',':x']
-        emr2 = [';-)',';)','*-)','*)',';-]',';]',';^}',':-,',';D',':-P',':P','X-P','XP','xp','x-p','xp',':-p',':p',':-b',':b','d:','=p','>:P']
-        emr3 = [':-/',':/',':-.','>:\\','>:/',':\\','=/','=\\',':L','=L',':S',':-|',':|',':$',':-X',':X',':-#',':#',':-&',':&']
-        emr4 = [';\'(','O:-)','O:)','O:-3','O:3','0:-3','0:3','0:-)','0:)','0;^)','>:-)','>:)','}:-)','}:)','3:-)','3:)','>;)','|;-)','|-O',':-J','<:-|','\',:-|','%-)','%)']
-        em = emh + ems + emr1 + emr2 + emr3 + emr4
     	#remove emoticons
         for c in line[:]:
-            if c in em:
+            if c in self.em:
                 del line[line.index(c)]
         self.sen = line
         return line
 
+    @timer
     def remHash(self,origTweet=True):
         '''
         Parameters: None
@@ -126,6 +139,7 @@ class Tweet:
         self.sen = line
         return line
 
+    @timer
     def sepChar(self,origTweet=True):
         '''
         Parameters: None
@@ -151,6 +165,7 @@ class Tweet:
         self.sen = line
         return line
 
+    @timer
     def spellCorrect(self,origTweet=True):
         '''
         Parameters: None
@@ -169,7 +184,7 @@ class Tweet:
         #pass it through a spell checker - hunspell
         for i in range(len(line)):
             flag = False
-            for c in [',','.','!','\'','"',';',':','?','&','/','\\','*','~','(',')','[',']','{','}','$','%','^','-','_','+','=','|','<','>']:
+            for c in self.punc:
                 if c in line[i]:
                     flag = True
                     break
@@ -178,7 +193,7 @@ class Tweet:
         self.sen = line
         return line
 
-    #replace @name with **name**
+    @timer
     def replName(self,name = '**NAME**',origTweet=True):
         '''
         Parameters: Word to replace @ mentions
@@ -208,3 +223,4 @@ if __name__ == '__main__':
     w = Tweet('@Manan ,I\'m lesving BITS today !! :] #freadom myNameIsManan')
     print('original:',w)
     print('cleaned:',w.defaultClean())
+    print('spell check:',w.spellCorrect())

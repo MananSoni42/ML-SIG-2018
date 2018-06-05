@@ -1,0 +1,10 @@
+DEBUG: __init__ ran in 0.0s
+DEBUG: remNewLine ran in 0.0s
+DEBUG: remEmojis ran in 0.0s
+DEBUG: remEmoticons ran in 0.0s
+DEBUG: remHash ran in 0.0s
+DEBUG: replName ran in 0.0s
+DEBUG: sepChar ran in 0.0s
+DEBUG: spellCorrect ran in 0.18s
+DEBUG: defaultClean ran in 0.18s
+DEBUG: spellCorrect ran in 0.24s
